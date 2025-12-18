@@ -1,0 +1,263 @@
+<!-- templates/generator/home.html -->
+{% extends 'generator/base.html' %}
+
+{% block title %}Home - AI Image Generator{% endblock %}
+
+{% block content %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 3rem;
+    }
+    
+    .hero h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+    
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card h3 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+    
+    .cta-section {
+        text-align: center;
+        padding: 3rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        color: white;
+    }
+    
+    .cta-section h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-white {
+        background: white;
+        color: #667eea;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-white:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+    
+    .btn-outline-white {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-outline-white:hover {
+        background: white;
+        color: #667eea;
+        transform: translateY(-2px);
+    }
+    
+    .recent-images {
+        margin-top: 3rem;
+    }
+    
+    .recent-images h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+    }
+    
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .image-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .image-preview {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .image-info {
+        padding: 1rem;
+    }
+    
+    .image-info h4 {
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    
+    .image-info p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .cta-buttons a {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="hero">
+    <h1>Transform Your Ideas into Stunning AI Art</h1>
+    <p>Create beautiful, unique images with our powerful AI image generator. No design skills required!</p>
+    {% if not user.is_authenticated %}
+        <a href="{% url 'signup' %}" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;">
+            Get Started Free
+        </a>
+    {% endif %}
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI-Powered Generation</h3>
+        <p>Our advanced AI creates detailed prompts and generates high-quality images based on your ideas.</p>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast & Easy</h3>
+        <p>Generate images in seconds. Just enter a topic and title, or write your own custom prompt.</p>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Multiple Styles</h3>
+        <p>Create images in various styles: photorealistic, digital art, cinematic, illustrations, and more.</p>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+    <div class="cta-section">
+        <h2>Ready to Create?</h2>
+        <p>Start generating amazing images with our AI-powered tools.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'index' %}" class="btn-white">🎯 Generate with AI Prompt</a>
+            <a href="{% url 'direct_generate' %}" class="btn-outline-white">✍️ Direct Generation</a>
+        </div>
+    </div>
+    
+    {% if recent_images %}
+        <div class="recent-images">
+            <h2>Recently Generated Images</h2>
+            <div class="image-grid">
+                {% for image in recent_images %}
+                    <div class="image-card">
+                        {% if image.image_data %}
+                            <img src="data:{{ image.content_type }};base64,{{ image.image_data }}" 
+                                 alt="{{ image.title }}" 
+                                 class="image-preview">
+                        {% else %}
+                            <div style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;">
+                                No Image Preview
+                            </div>
+                        {% endif %}
+                        <div class="image-info">
+                            <h4>{{ image.title }}</h4>
+                            <p>{{ image.topic }} • {{ image.created_at|date:"M d, Y" }}</p>
+                            <a href="{% url 'result' image.id %}" style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
+                                View Details →
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="cta-section">
+        <h2>Join Thousands of Creators</h2>
+        <p>Sign up now and start creating amazing AI-generated images for free!</p>
+        <div class="cta-buttons">
+            <a href="{% url 'signup' %}" class="btn-white">Sign Up Free</a>
+            <a href="{% url 'login' %}" class="btn-outline-white">Login to Account</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

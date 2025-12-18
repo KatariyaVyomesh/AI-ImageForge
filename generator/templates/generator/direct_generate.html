@@ -1,0 +1,168 @@
+<!-- templates/generator/direct_generate.html -->
+{% extends 'generator/base.html' %}
+
+{% block title %}Direct Generation - AI Image Generator{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        max-width: 600px;
+        width: 100%;
+        margin: 2rem auto;
+    }
+    
+    h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+    
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        resize: vertical;
+        min-height: 150px;
+        font-family: Arial, sans-serif;
+    }
+    
+    textarea:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .btn-generate {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.2s;
+    }
+    
+    .btn-generate:hover {
+        transform: translateY(-2px);
+    }
+    
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #667eea;
+        text-decoration: none;
+    }
+    
+    .back-link:hover {
+        text-decoration: underline;
+    }
+    
+    .instructions {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .error {
+        background: #fee;
+        color: #c33;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border-left: 4px solid #c33;
+    }
+    
+    .prompt-examples {
+        margin-top: 20px;
+        background: #f0f8ff;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .prompt-examples h4 {
+        margin-top: 0;
+        color: #555;
+    }
+    
+    .example-prompt {
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-style: italic;
+        color: #666;
+        border-left: 3px solid #667eea;
+    }
+</style>
+
+<div class="container">
+    <h1>🖼️ Direct Image Generator</h1>
+    
+    <div class="instructions">
+        <h3>How to create effective prompts:</h3>
+        <ul>
+            <li>Be specific about subject, setting, and composition</li>
+            <li>Include details about style, lighting, and mood</li>
+            <li>Mention camera angle and framing if relevant</li>
+            <li>Specify artistic style (photorealistic, digital art, oil painting, etc.)</li>
+        </ul>
+    </div>
+    
+    {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="prompt">Your Image Prompt:</label>
+            <textarea id="prompt" name="prompt" 
+                      placeholder="Describe the image you want to generate... 
+Example: A majestic dragon soaring over a medieval castle at sunset, cinematic lighting, photorealistic, 8k resolution"
+                      required>{% if prompt %}{{ prompt }}{% endif %}</textarea>
+        </div>
+        
+        <button type="submit" class="btn-generate">Generate Image</button>
+    </form>
+    
+    <div class="prompt-examples">
+        <h4>Example Prompts:</h4>
+        <div class="example-prompt">
+            "A cyberpunk cityscape at night with neon lights reflecting on wet streets, rain effects, cinematic shot from ground level, digital art style"
+        </div>
+        <div class="example-prompt">
+            "A serene Japanese garden with cherry blossoms in spring, koi pond with floating petals, soft morning light, watercolor painting style"
+        </div>
+        <div class="example-prompt">
+            "An astronaut floating in space with Earth in background, detailed spacesuit, stars and galaxies visible, photorealistic, 4k resolution"
+        </div>
+    </div>
+    
+    <a href="{% url 'index' %}" class="back-link">← Back to Automatic Generator</a>
+</div>
+{% endblock %}

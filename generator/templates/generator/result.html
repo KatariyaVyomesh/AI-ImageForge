@@ -1,0 +1,136 @@
+{% extends 'generator/base.html' %}
+
+{% block title %}Result - AI Image Generator{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generated Prompt - AI Image Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .prompt-box {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            flex: 1;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .note {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generated Image</h1>
+    
+    <div>
+        <h2>Topic: {{ task.topic }}</h2>
+        <h3>Title: {{ task.title }}</h3>
+        
+        <!-- Add generation type badge -->
+        <div style="margin-bottom: 15px;">
+            <span style="background: {% if task.generation_type == 'automatic' %}#4CAF50{% else %}#2196F3{% endif %}; 
+                        color: white; 
+                        padding: 5px 10px; 
+                        border-radius: 15px;
+                        font-size: 12px;">
+                {% if task.generation_type == 'automatic' %}
+                    AI-Generated Prompt
+                {% else %}
+                    Direct Prompt
+                {% endif %}
+            </span>
+        </div>
+        
+        <div style="margin: 20px 0;">
+            <strong>Generated Prompt:</strong>
+            <p>{{ task.generated_prompt }}</p>
+        </div>
+        
+        {% if image_data %}
+            <div style="margin: 20px 0;">
+                <strong>Generated Image:</strong><br>
+                <img src="{{ image_data }}" alt="Generated Image" style="max-width: 512px; max-height: 512px;">
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <button onclick="downloadImage()">Download Image</button>
+                <a href="{% url 'index' %}" style="margin-left: 10px;">Generate Another</a>
+                <a href="{% url 'direct_generate' %}" style="margin-left: 10px;">Direct Generation</a>
+            </div>
+            
+            <script>
+                function downloadImage() {
+                    const link = document.createElement('a');
+                    link.href = '{{ image_data }}';
+                    link.download = 'generated_image.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            </script>
+        {% else %}
+            <p>Image generation failed. Please try again.</p>
+            <a href="{% url 'index' %}">Try Again</a>
+        {% endif %}
+    </div>
+</body>
+</html>
+{% endblock %}

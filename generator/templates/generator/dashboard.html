@@ -1,0 +1,232 @@
+<!-- templates/generator/dashboard.html -->
+{% extends 'generator/base.html' %}
+
+{% block title %}My Images - AI Image Generator{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .dashboard-header h1 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+        min-width: 150px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .images-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .image-item {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .image-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .image-preview {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .image-details {
+        padding: 1.5rem;
+    }
+    
+    .image-title {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .image-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .generation-type {
+        background: #eef2ff;
+        color: #667eea;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .no-images {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 15px;
+        color: #666;
+    }
+    
+    .no-images-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .btn-small {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        flex: 1;
+        text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+        .stats {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-card {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .images-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>My Generated Images</h1>
+    <p>View and manage all your AI-generated images</p>
+</div>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_images }}</div>
+        <div class="stat-label">Total Images</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ images|length }}</div>
+        <div class="stat-label">Images Displayed</div>
+    </div>
+</div>
+
+{% if images %}
+    <div class="images-grid">
+        {% for image in images %}
+            <div class="image-item">
+                {% if image.image_data %}
+                    <img src="data:{{ image.content_type }};base64,{{ image.image_data }}" 
+                         alt="{{ image.title }}" 
+                         class="image-preview">
+                {% else %}
+                    <div style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;">
+                        No Image Available
+                    </div>
+                {% endif %}
+                <div class="image-details">
+                    <div class="image-title">{{ image.title }}</div>
+                    <div class="image-meta">
+                        <span>{{ image.topic }}</span>
+                        <span class="generation-type">
+                            {% if image.generation_type == 'automatic' %}
+                                AI Prompt
+                            {% else %}
+                                Direct
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div style="color: #999; font-size: 0.8rem; margin-bottom: 1rem;">
+                        {{ image.created_at|date:"M d, Y" }}
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{% url 'result' image.id %}" class="btn-small btn-primary">View</a>
+                        <button onclick="downloadImage('{{ image.id }}')" class="btn-small btn-secondary">Download</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-images">
+        <div class="no-images-icon">🖼️</div>
+        <h3>No images yet</h3>
+        <p>Start creating amazing AI images!</p>
+        <div style="margin-top: 2rem;">
+            <a href="{% url 'index' %}" class="btn btn-primary">Generate Your First Image</a>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    function downloadImage(imageId) {
+        // Find the image element and trigger download
+        const imageElement = document.querySelector(`[data-image-id="${imageId}"] img`);
+        if (imageElement) {
+            const link = document.createElement('a');
+            link.href = imageElement.src;
+            link.download = `ai_image_${imageId}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+    
+    // Add data-image-id attribute to each image
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageItems = document.querySelectorAll('.image-item');
+        imageItems.forEach((item, index) => {
+            const imageId = {{ images.0.id }} || index; // This needs proper implementation
+            item.setAttribute('data-image-id', imageId);
+        });
+    });
+</script>
+{% endblock %}
